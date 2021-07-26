@@ -24,13 +24,14 @@ app.get('/', (req, res) => {
   res.render('home');
 });
 
-app.get('/addboba', async (req, res) => {
-  const boba = new Boba({
-    title: 'Happy Lemon',
-    description: 'Delicious lemon tea!',
-  });
-  await boba.save();
-  res.send(boba);
+app.get('/bobas', async (req, res) => {
+  const bobas = await Boba.find({});
+  res.render('bobas/index', { bobas });
+});
+
+app.get('/bobas/:id', async (req, res) => {
+  const boba = await Boba.findById(req.params.id);
+  res.render('bobas/show', { boba });
 });
 
 app.listen(3000, () => {
