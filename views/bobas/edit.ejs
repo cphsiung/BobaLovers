@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Boba Places</title>
+</head>
+<body>
+    <h1>Edit Boba Places</h1>    
+    <form action='/bobas/<%=boba._id %>?_method=PUT' method="POST">
+        <div>
+            <label for='title'>Title</label>
+            <input type='text' id='title' name='boba[title]' value='<%= boba.title %>'>
+        </div>
+        <div>
+            <label for='location'>Location</label>
+            <input type='text' id='location' name='boba[location]' value='<%= boba.location %>'>
+        </div>
+        <button>Update Boba Places</button>     
+    </form>
+    <a href="/bobas/<%= boba._id %>">Back To Boba Place</a>
+</body>
+</html>

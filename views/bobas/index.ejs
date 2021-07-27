@@ -8,6 +8,9 @@
 </head>
 <body>
     <h1>All Boba Places</h1>
+    <div>
+        <a href="/bobas/new">Add New Boba Places</a>
+    </div>
     <ul>
         <% for (let boba of bobas) { %>
         <li><a href="bobas/<%= boba._id %>"><%= boba.title %></a></li>
