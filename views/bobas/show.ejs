@@ -12,6 +12,11 @@
     <p>
         <a href="/bobas/<%= boba._id %>/edit">Edit</a>
     </p>
+    <p>
+        <form action="/bobas/<%= boba._id %>?_method=DELETE" method="POST">
+            <button>Delete</button>
+        </form>
+    </p>
     <footer>
         <a href="/bobas">All Boba Places</a>
     </footer>

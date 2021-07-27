@@ -59,6 +59,12 @@ app.put('/bobas/:id/', async (req, res) => {
   res.redirect(`/bobas/${boba._id}`);
 });
 
+app.delete('/bobas/:id', async (req, res) => {
+  const { id } = req.params;
+  await Boba.findByIdAndDelete(id);
+  res.redirect('/bobas');
+})
+
 app.listen(3000, () => {
   console.log('Serving on port 3000');
 });
