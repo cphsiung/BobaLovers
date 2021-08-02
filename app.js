@@ -10,8 +10,9 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 
-const bobas = require('./routes/bobas');
-const reviews = require('./routes/reviews');
+const bobaRoutes = require('./routes/bobas');
+const reviewRoutes = require('./routes/reviews');
+const userRoutes = require('./routes/users');
 
 mongoose.connect('mongodb://localhost:27017/boba-lovers', {
   useNewUrlParser: true,
@@ -63,8 +64,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/bobas', bobas);
-app.use('/bobas/:id/reviews', reviews);
+app.use('/bobas', bobaRoutes);
+app.use('/bobas/:id/reviews', reviewRoutes);
+app.use('/', userRoutes);
 
 app.get('/', (req, res) => {
   res.render('home');
