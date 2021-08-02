@@ -25,6 +25,7 @@ router.post(
       boba.reviews.push(review);
       await review.save();
       await boba.save();
+      req.flash('success', 'Successfully created a new review!');
       res.redirect(`/bobas/${boba._id}`);
     })
   );
@@ -35,6 +36,7 @@ router.post(
       const { id, reviewId } = req.params;
       await Boba.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
       await Review.findByIdAndDelete(reviewId);
+      req.flash('success', 'Successfully deleted review!');
       res.redirect(`/bobas/${id}`);
     })
   );
