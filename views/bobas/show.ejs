@@ -10,20 +10,26 @@
             </div>
             <ul class="list-group list-group-flush">
               <li class="list-group-item text-muted"><%= boba.location %></li>
+              <li class="list-group-item">Submitted by <%= boba.author.username %></li>
               <li class="list-group-item">$<%= boba.price %>/cup</li>
             </ul>
+            <%# Hide edit and delete button if user is not the owner %>
+            <% if(currentUser && boba.author.equals(currentUser)) { %>
             <div class="card-body">
                 <a class="card-link btn btn-info" href="/bobas/<%= boba._id %>/edit">Edit</a>
                 <form class="d-inline" action="/bobas/<%= boba._id %>?_method=DELETE" method="POST">
                     <button class="btn btn-danger">Delete</button>
                 </form>
             </div>
+            <% } %>
             <div class="card-footer text-muted">
                 2 days ago
             </div>
           </div>
     </div>
     <div class="col-6">
+        <%# Show review window if user is logged in %>
+        <% if(currentUser) { %>
         <h2>Leave a Review</h2>
         <form action="/bobas/<%= boba._id %>/reviews" method="POST" class="mb-3 validated-form" novalidate>
             <div class="mb-3">
@@ -39,14 +45,19 @@
             </div>
             <button class="btn btn-success">Submit</button>
         </form>
+        <% } %>
         <% for(let review of boba.reviews) { %>
         <div class="card mb-3">
           <div class="card-body">
               <h5 class="card-title">Rating: <%= review.rating %></h5>
+              <h6 class="card-subtitle mb-2 text-muted">By <%= review.author.username %></h6>
               <p class="card-text">Review: <%= review.body %></p>
+              <%# Hide delete review button if user is not the owner %>
+              <% if(currentUser && review.author.equals(currentUser)) { %>
               <form action="/bobas/<%= boba._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
                 <button class="btn btn-sm btn-danger">Delete</button>
               </form>
+              <% } %>
           </div>
         </div>
         <% } %>

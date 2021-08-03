@@ -1,21 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { bobaSchema } = require('../schemas.js');
-const { isLoggedIn } = require('../middleware');
+const { validateBoba, isLoggedIn, isAuthor } = require('../middleware');
 
-const ExpressError = require('../utils/ExpressError');
 const Boba = require('../models/boba');
-
-const validateBoba = (req, res, next) => {
-    const { error } = bobaSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map((el) => el.message).join(', ');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-};
 
 router.get(
     '/',
@@ -33,8 +21,8 @@ router.post(
     '/',
     isLoggedIn, validateBoba,
     catchAsync(async (req, res, next) => {
-        // if (!req.body.boba) throw new ExpressError('Invalid Boba Place Data', 400);
         const boba = new Boba(req.body.boba);
+        boba.author = req.user._id;
         await boba.save();
         req.flash('success', 'Successfully create a new boba place!');
         res.redirect(`/bobas/${boba._id}`);
@@ -44,7 +32,12 @@ router.post(
 router.get(
     '/:id',
     catchAsync(async (req, res) => {
-        const boba = await Boba.findById(req.params.id).populate('reviews');
+        const boba = await Boba.findById(req.params.id).populate({
+            path: 'reviews',
+            populate: {
+                path: 'author'
+            }
+        }).populate('author');
         if (!boba) {
             req.flash('error', 'Boba place not found!');
             return res.redirect('/bobas');
@@ -55,8 +48,10 @@ router.get(
 
 router.get(
     '/:id/edit',
-    isLoggedIn, catchAsync(async (req, res) => {
-        const boba = await Boba.findById(req.params.id);
+    isLoggedIn, isAuthor, catchAsync(async (req, res) => {
+        const {id} = req.params;
+        const boba = await Boba.findById(id);
+        // check if the boba place exists
         if (!boba) {
             req.flash('error', 'Boba place not found!');
             return res.redirect('/bobas');
@@ -67,7 +62,7 @@ router.get(
 
 router.put(
     '/:id',
-    isLoggedIn, validateBoba,
+    isLoggedIn, isAuthor, validateBoba,
     catchAsync(async (req, res) => {
         const { id } = req.params;
         const boba = await Boba.findByIdAndUpdate(id, { ...req.body.boba });
@@ -77,7 +72,7 @@ router.put(
 );
 
 router.delete(
-    '/:id',
+    '/:id', isLoggedIn, isAuthor,
     catchAsync(async (req, res) => {
         const { id } = req.params;
         await Boba.findByIdAndDelete(id);
