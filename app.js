@@ -59,6 +59,7 @@ passport.deserializeUser(User.deserializeUser());
 
 //set up middleware for every success request to show success flash message
 app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   next();
