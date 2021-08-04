@@ -46,6 +46,9 @@ module.exports.renderEditForm = async (req, res) => {
 module.exports.updateBoba = async (req, res) => {
     const { id } = req.params;
     const boba = await Boba.findByIdAndUpdate(id, { ...req.body.boba });
+    const imgs = req.files.map(f => ({url: f.path, filename: f.filename}));
+    boba.images.push(...imgs);
+    await boba.save();
     req.flash('success', 'Successfully updated the boba place!');
     res.redirect(`/bobas/${boba._id}`);
 }

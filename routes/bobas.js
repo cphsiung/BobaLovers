@@ -15,7 +15,7 @@ router.get('/new', isLoggedIn, bobas.renderNewForm);
 
 router.route('/:id')
     .get(catchAsync(bobas.showBoba))
-    .put(isLoggedIn, isAuthor, validateBoba, catchAsync(bobas.updateBoba))
+    .put(isLoggedIn, isAuthor, upload.array('image'), validateBoba, catchAsync(bobas.updateBoba))
     .delete(isLoggedIn, isAuthor, catchAsync(bobas.deleteBoba));
 
 router.get(
