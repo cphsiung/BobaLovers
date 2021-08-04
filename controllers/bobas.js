@@ -11,6 +11,7 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.createBoba = async (req, res, next) => {
     const boba = new Boba(req.body.boba);
+    boba.images = req.files.map(f => ({url: f.path, filename: f.filename}));
     boba.author = req.user._id;
     await boba.save();
     req.flash('success', 'Successfully create a new boba place!');
