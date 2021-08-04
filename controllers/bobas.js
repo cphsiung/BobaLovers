@@ -1,4 +1,5 @@
 const Boba = require('../models/boba');
+const { cloudinary } = require('../cloudinary');
 
 module.exports.index = async (req, res) => {
     const bobas = await Boba.find({});
@@ -11,7 +12,7 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.createBoba = async (req, res, next) => {
     const boba = new Boba(req.body.boba);
-    boba.images = req.files.map(f => ({url: f.path, filename: f.filename}));
+    boba.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     boba.author = req.user._id;
     await boba.save();
     req.flash('success', 'Successfully create a new boba place!');
@@ -46,9 +47,15 @@ module.exports.renderEditForm = async (req, res) => {
 module.exports.updateBoba = async (req, res) => {
     const { id } = req.params;
     const boba = await Boba.findByIdAndUpdate(id, { ...req.body.boba });
-    const imgs = req.files.map(f => ({url: f.path, filename: f.filename}));
+    const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
     boba.images.push(...imgs);
     await boba.save();
+    if (req.body.deleteImages) {
+        for(let filename of req.body.deleteImages) {
+            await cloudinary.uploader.destroy(filename);
+        }
+        await boba.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
+    }
     req.flash('success', 'Successfully updated the boba place!');
     res.redirect(`/bobas/${boba._id}`);
 }
