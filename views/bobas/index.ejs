@@ -1,4 +1,5 @@
 <% layout('layouts/boilerplate')%>
+<div id="map" style="width: 100%; height: 500px"></div>
 <h1>All Boba Places</h1>
 <div>
     <a href="/bobas/new">Add New Boba Places</a>
@@ -7,7 +8,12 @@
     <div class="card" mb-3>
         <div class="row">
             <div class="col-md-4">
+                <% if(boba.images.length) { %>
                 <img class="img-fluid" alt="" src="<%= boba.images[0].url %>">
+                <% } else { %>
+                // show default image if no image found
+                <img class="img-fluid" alt="" src="https://res.cloudinary.com/dx1fbfw74/image/upload/v1628051992/BobaLovers/cdpysyi22txwhlnt4ogg.jpg">
+                <% } %>
             </div>
             <div class="col-md-8">
                 <div class="card-body">
@@ -22,3 +28,10 @@
         </div>
     </div>
 <% } %>
+
+<script>
+    const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
+    const bobas = {features: <%- JSON.stringify(bobas) %>}
+</script>
+
+<script src="/javascripts/clusterMap.js"></script>

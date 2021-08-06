@@ -11,9 +11,22 @@ ImageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_150,h_200');
 })
 
+const opts = { toJSON: { virtuals: true } };
+
 const BobaSchema = new Schema({
     title: String,
     images: [ImageSchema],
+    geometry: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
+    },
     price: Number,
     description: String,
     location: String,
@@ -27,7 +40,13 @@ const BobaSchema = new Schema({
             ref: 'Review',
         },
     ],
-});
+}, opts);
+
+BobaSchema.virtual('properties.popUpMarkup').get(function () {
+    return `
+        <strong><a href="/bobas/${this._id}">${this.title}</a><strong>
+        <p>${this.description.substring(0, 20)}...</p>`;
+})
 
 BobaSchema.post('findOneAndDelete', async function (doc) {
     if (doc) {

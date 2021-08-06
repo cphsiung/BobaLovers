@@ -3,6 +3,7 @@
 
 <div class="row">
     <div class="col-6">
+        <div id='map' style='width: 100%; height: 300px;'></div>
         <div id="bobaCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
               <% boba.images.forEach((img, i) => { %>
@@ -100,3 +101,9 @@
     </div>
 </div>
 
+<script>
+    const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
+    const boba = <%- JSON.stringify(boba) %>
+</script>
+
+<script src="/javascripts/showPageMap.js"></script>

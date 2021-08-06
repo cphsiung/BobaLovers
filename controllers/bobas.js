@@ -1,4 +1,7 @@
 const Boba = require('../models/boba');
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({accessToken: mapBoxToken});
 const { cloudinary } = require('../cloudinary');
 
 module.exports.index = async (req, res) => {
@@ -11,7 +14,12 @@ module.exports.renderNewForm = (req, res) => {
 }
 
 module.exports.createBoba = async (req, res, next) => {
+    const geoData = await geocoder.forwardGeocode({
+        query: req.body.boba.location,
+        limit: 1
+    }).send()
     const boba = new Boba(req.body.boba);
+    boba.geometry = geoData.body.features[0].geometry;
     boba.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     boba.author = req.user._id;
     await boba.save();
